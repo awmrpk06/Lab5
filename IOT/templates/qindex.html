@@ -44,7 +44,8 @@
     var database = firebase.database();
     var arr = [];
     var yyy = 0;
-    var xxx = '';
+    var xxx = 'waiting...';
+    var zzz = 0;
     reData= () =>{
         var starCountRef = firebase.database().ref('/');
         starCountRef.on('value', (snapshot) => {
@@ -67,11 +68,16 @@
         });
     }
 
-    function addData(chart, label, data) {
+    function addData(chart, label, data0, data1) {
+        
         chart.data.labels.push(label);
-        chart.data.datasets.forEach((dataset) => {
-            dataset.data.push(data);
-        });
+        // console.log(chart.data.datasets[0]);
+        // console.log(chart.data.datasets[1].data);
+        chart.data.datasets[0].data.push(data0);
+        chart.data.datasets[1].data.push(data1);
+        // chart.data.datasets.forEach((dataset) => {
+        //     dataset.data.push(data0);
+        // });
         chart.update();
     }
 
@@ -92,70 +98,114 @@
             arr.shift();
         }
         reData();
-        addData(myChart,xxx,yyy);
-        arr.push(yyy);
+        addData(myChart,xxx,yyy,zzz);
+        arr.push(xxx);
         
     }, 3000);
 
     // Math.floor(Math.random() * 10);
 
 
-    // const labels = [
-    //     'January',
-    //     'February',
-    //     'March',
-    //     'April',
-    //     'May',
-    //     'June',
-    // ];
     const labels = [];
     const data = {
         labels: labels,
         datasets: [{
+            type: 'line',
             label: 'Temperature',
-            backgroundColor: 'rgb(255, 99, 132)',
-            borderColor: 'rgb(255, 99, 132)',
+            backgroundColor: 'rgb(255,0,0,.5)',
+            borderColor: 'rgb(255,0,0,.5)',
             data: [],
+            yAxisID: 'y',
+        }, {
+            type: 'line',
+            label: 'Humid',
+
+            backgroundColor: 'rgb(0,0,255,.5)',
+            borderColor: 'rgb(0,0,255,.5)',
+            data: [],
+            yAxisID: 'y2',
         }]
     };
     const config = {
         type: 'line',
         data,
         options: {
+            elements:{
+                point:{
+                    radius:6,
+                },
+            },
             plugins: {
                 legend: {
-                    display: false
+                    display: true,
                 },
                 title: {
                     display: true,
-                    text: 'Temperature',
+                    text: 'My Chart',
                     font: {
                             size: 24
                     }
-                }
+                },
+                
             },
             scales: {
                 x: {
                     display: true,
                     title: {
-                    display: true,
-                    text: 'Time'
-                    }
+                        display: true,
+                        text: 'Time',
+                        font: {
+                            size: 24
+                        }
+                    },
+                    
                 },
                 y: {
+                    padding:10,
                     display: true,
                     title: {
-                    display: true,
-                    text: 'in °C'
+                        display: true,
+                        text: 'Temperature - °C',
+                        color: 'rgb(255,0,0)',
+                        font: {
+                            size: 24
+                        }
                     },
+                    // type: 'linear',
+                    grid: {
+                        display: 'true',
+                        backgroundColor: 'rgb(255,0,0)',
+                        borderColor: 'rgb(255,0,0)',
+                    },
+                    ticks:{
+                        color: 'rgb(255,0,0)',
+                        
+                    }
                 },
                 y2: {
                     display: true,
                     title: {
-                    display: true,
-                    text: 'in °F'
+                        display: true,
+                        text: 'Humid - %',
+                        color: 'rgb(0,0,255)',
+                        font: {
+                            size: 24
+                        }
                     },
-                }
+                    // type: 'linear',
+                    position:'right',
+                    grid: {
+                        display: 'true',
+                        backgroundColor: 'rgb(0,0,255)',
+                        borderColor: 'rgb(0,0,255)',
+                    },
+                    ticks:{
+                        color: 'rgb(0,0,255)',
+                        
+                    },
+                                        
+                },
+
             }
         }
     };
@@ -166,4 +216,6 @@
         document.getElementById('myChart'),
         config
     );
+
+
 </script>
