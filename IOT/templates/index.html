@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Temp</title>
+</head>
+<body>
+    <div>
+        <canvas id="myChart" style="width:100%;height:90vh!important"></canvas>
+    </div>
+</body>
+</html>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- The core Firebase JS SDK is always required and must be listed first -->
+<script src="https://www.gstatic.com/firebasejs/8.6.7/firebase-app.js"></script>
+
+<!-- TODO: Add SDKs for Firebase products that you want to use
+     https://firebase.google.com/docs/web/setup#available-libraries -->
+<script src="https://www.gstatic.com/firebasejs/8.6.7/firebase-analytics.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.6.7/firebase-database.js"></script>
+
+
+
+<script>
+    // Your web app's Firebase configuration
+    // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+    var firebaseConfig = {
+        apiKey: "AIzaSyChZeyXodT_uJiykzmsw201LPVXgk4HFcE",
+        authDomain: "lab5-c600f.firebaseapp.com",
+        databaseURL: "https://lab5-c600f-default-rtdb.firebaseio.com",
+        projectId: "lab5-c600f",
+        storageBucket: "lab5-c600f.appspot.com",
+        messagingSenderId: "807353309157",
+        appId: "1:807353309157:web:000d51ae2688aea3f7810c",
+        measurementId: "G-TB967Q3ZRZ"
+    };
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    // firebase.analytics();
+
+    // Get a reference to the database service
+    var database = firebase.database();
+    var arr = [];
+    var yyy = 0;
+    var xxx = '';
+    reData= () =>{
+        var starCountRef = firebase.database().ref('/');
+        starCountRef.on('value', (snapshot) => {
+            const data = snapshot.val();
+            reArr = Object.values(data);
+            // console.log(reArr);
+            // reArr.forEach(element => {
+            //     console.log(element['Temp']+' - '+element['Time']);
+            // });
+            yy = data[1]['Temp'];
+            xxx = data[1]['Time'];
+            // console.log(xxx);
+            yyy = Number(yy);
+            
+
+            // console.log(data);
+            // updateStarCount(postElement, data);
+
+        });
+    }
+
+    function addData(chart, label, data) {
+        chart.data.labels.push(label);
+        chart.data.datasets.forEach((dataset) => {
+            dataset.data.push(data);
+        });
+        chart.update();
+    }
+
+    function removeData(chart) {
+        chart.data.labels.shift();
+        // console.log(chart.data.labels);
+        chart.data.datasets.forEach((dataset) => {
+            dataset.data.shift();
+            // console.log(dataset.data);
+        });
+        
+        chart.update();
+    }
+    
+    setInterval(() => {
+        if(arr.length>5){
+            removeData(myChart);
+            arr.shift();
+        }
+        reData();
+        addData(myChart,xxx,yyy);
+        arr.push(yyy);
+        
+    }, 3000);
+
+    // Math.floor(Math.random() * 10);
+
+
+    // const labels = [
+    //     'January',
+    //     'February',
+    //     'March',
+    //     'April',
+    //     'May',
+    //     'June',
+    // ];
+    const labels = [];
+    const data = {
+        labels: labels,
+        datasets: [{
+            label: 'Temperature',
+            backgroundColor: 'rgb(255, 99, 132)',
+            borderColor: 'rgb(255, 99, 132)',
+            data: [],
+        }]
+    };
+    const config = {
+        type: 'line',
+        data,
+        options: {
+            plugins: {
+                legend: {
+                    display: false
+                },
+                title: {
+                    display: true,
+                    text: 'Temperature',
+                    font: {
+                            size: 24
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    display: true,
+                    title: {
+                    display: true,
+                    text: 'Time'
+                    }
+                },
+                y: {
+                    display: true,
+                    title: {
+                    display: true,
+                    text: 'in °C'
+                    },
+                }
+            }
+        }
+    };
+
+    // === include 'setup' then 'config' above ===
+
+    var myChart = new Chart(
+        document.getElementById('myChart'),
+        config
+    );
+</script>
